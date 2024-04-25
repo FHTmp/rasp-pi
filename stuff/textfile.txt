@@ -17,3 +17,23 @@ Traceback (most recent call last):
   File "/usr/lib/python3/dist-packages/sense_emu/sense_hat.py", line 593, in _init_humidity
     raise OSError('Humidity Init Failed')
 OSError: Humidity Init Failed
+
+
+
+
+//more error from the terminal when run sense_emu_gui
+
+CTraceback (most recent call last):
+  File "/usr/bin/sense_emu_gui", line 33, in <module>
+    sys.exit(load_entry_point('sense-emu==1.2.2', 'gui_scripts', 'sense_emu_gui')())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/sense_emu/gui.py", line 56, in main
+    app.run(sys.argv)
+  File "/usr/lib/python3/dist-packages/gi/overrides/Gio.py", line 40, in run
+    with register_sigint_fallback(self.quit):
+  File "/usr/lib/python3.11/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/usr/lib/python3/dist-packages/gi/_ossighelper.py", line 237, in register_sigint_fallback
+    signal.default_int_handler(signal.SIGINT, None)
+KeyboardInterrupt
+

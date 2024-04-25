@@ -1,0 +1,25 @@
+<html>
+
+<div id="temperature"></div>
+<div id="humidity"></div>
+<div id="warning">{{ warning }}</div>
+
+
+
+<script>
+function updateData(){
+    fetch('/')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('temperature').innerText = 'Temperature: ${data.temperature} *C';
+            document.getElementById(humidity).innerText = 'Humidity: ${data.humidity} %';
+        });
+        setInterval(updateData, 5000); 
+}
+
+
+</script>
+
+
+</html>
+

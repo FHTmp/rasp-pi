@@ -1,5 +1,7 @@
-# rasp-pi
+## rasp-pi
 
-This is my first git hub repositories:
+Rasp PI
 
-Testing
+#### License
+
+ MIT

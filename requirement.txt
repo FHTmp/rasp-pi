@@ -1,0 +1,3 @@
+# flask - pip install flask
+# set up python envirnment -
+# using sense emu instead of SenseHat

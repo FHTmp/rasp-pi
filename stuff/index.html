@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Assignment1</title>
+    <style>        
+        /* Style for the main title */
+        h1 {
+            text-align: center;
+        }
+        
+        /* Style for the box frame */
+        .box-frame {
+            width: 80%;
+            margin: 20px auto;
+            border: 1px solid #333;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        /* Style for the small box to display data */
+        .data-box {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        /* Style for the warning message */
+        .warning {
+            background-color: #ffcccc;
+            border: 1px solid #ff0000;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main title -->
+    <h1>My Raspberry Pi</h1>
+
+    <!-- Box frame for the body -->
+    <div class="box-frame">
+        <!-- Warning message (initially hidden) -->
+        <div class="warning" id="warning-message" style="display: none;"></div>
+
+        <!-- Small box to display temperature data -->
+        <div class="data-box">
+            <h2>Temperature</h2>
+            <p id="temperature"><span id="temperature">{{ temperature }}</span>°C</p>
+        </div>
+
+        <!-- Small box to display humidity data -->
+        <div class="data-box">
+            <h2>Humidity</h2>
+            <p id="humidity"><span id="humidity">{{ humidity }}</span>%</p>
+        </div>
+    </div>
+
+    <!-- JavaScript to update temperature, humidity, and warning message -->
+    <script>
+        // Function to fetch temperature and humidity data from the server
+        function fetchData() {
+            // Assume there is an endpoint on the server to fetch temperature and humidity data
+            // Replace the URL with the actual endpoint
+            fetch('/')
+                .then(response => response.json())
+                .then(data => {
+                    // Update temperature and humidity values in the HTML
+                    document.getElementById('temperature').innerText = `Temperature: ${data.temperature}°C`;
+                    document.getElementById('humidity').innerText = `Humidity: ${data.humidity}%`;
+
+                    // Check if temperature or humidity exceeds thresholds
+                    if (data.temperature > 40 || data.humidity > 90) {
+                        // Construct and display the warning message
+                        var warningMessage = "WARNING: ";
+                        if (data.temperature > 40) {
+                            warningMessage += `Temperature (${data.temperature}°C) exceeds 40°C. `;
+                        }
+                        if (data.humidity > 90) {
+                            warningMessage += `Humidity (${data.humidity}%) exceeds 90%. `;
+                        }
+                        document.getElementById('warning-message').innerText = warningMessage;
+                        document.getElementById('warning-message').style.display = 'block';
+                    } else {
+                        // Hide the warning message if thresholds are not exceeded
+                        document.getElementById('warning-message').style.display = 'none';
+                    }
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        // Fetch data initially when the page loads
+        window.onload = fetchData;
+
+        // Update data every second
+        setInterval(fetchData, 1000);
+    </script>
+</body>
+</html>

@@ -92,5 +92,68 @@ Certainly! Here's a detailed step-by-step guide for displaying data and messages
 5. **Implement Warning Logic:**
    - Implement a function (`check_warning`) to check if the temperature or humidity exceeds the predefined thresholds (40°C and 90% respectively).
    - Update the warning message on the web interface if any threshold is exceeded.
+   
+   # Script to monitor temperature and humidity thresholds
+def check_warning(temperature, humidity):
+    """
+    Check if the temperature or humidity exceeds predefined thresholds.
+
+    Args:
+    temperature (float): Current temperature reading in degrees Celsius.
+    humidity (float): Current humidity reading as a percentage.
+
+    Returns:
+    str or None: A warning message if any threshold is exceeded, otherwise None.
+    """
+    warning_message = None
+
+    # Check temperature threshold
+    if temperature > 40:
+        warning_message = "High temperature warning: Temperature exceeds 40°C!"
+    
+    # Check humidity threshold
+    if humidity > 90:
+        if warning_message:
+            # If a warning message already exists, append the humidity warning
+            warning_message += " Humidity exceeds 90%!"
+        else:
+            # If no warning message exists, create a new one for humidity
+            warning_message = "High humidity warning: Humidity exceeds 90%!"
+    
+    return warning_message
+
+
+# Script to update warning message on the web interface
+def update_warning_message(warning_message):
+    """
+    Update the warning message on the web interface.
+
+    Args:
+    warning_message (str): The warning message to be displayed on the web interface.
+    """
+    # Assume there is a function to update the warning message on the web interface
+    # You can use AJAX or WebSocket for real-time updates without page refresh
+    # Here, we print the warning message for demonstration purposes
+    print("Warning:", warning_message)
+
+
+# Example usage:
+# Simulate temperature and humidity readings
+current_temperature = 42  # Example temperature reading in degrees Celsius
+current_humidity = 92     # Example humidity reading as a percentage
+
+# Check for warnings
+warning = check_warning(current_temperature, current_humidity)
+
+# Update warning message on the web interface
+if warning:
+    update_warning_message(warning)
+
+   
+   
+   
+   
+   
+   
 
 With these steps, your web interface should dynamically display temperature and humidity data from the Sense-HAT emulator, along with warning messages when thresholds are exceeded. Make sure to test thoroughly to ensure everything works as expected. Let me know if you need further clarification or assistance with any part of this process!

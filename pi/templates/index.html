@@ -1,25 +1,35 @@
-<html>
-
-<div id="temperature"></div>
-<div id="humidity"></div>
-<div id="warning">{{ warning }}</div>
-
-
-
-<script>
-function updateData(){
-    fetch('/')
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('temperature').innerText = 'Temperature: ${data.temperature} *C';
-            document.getElementById(humidity).innerText = 'Humidity: ${data.humidity} %';
-        });
-        setInterval(updateData, 5000); 
-}
-
-
-</script>
-
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sense-HAT Data</title>
+</head>
+<body>
+    <h1>Sense-HAT Data</h1>
+    <p>Temperature: <span id="temperature">{{ temperature }}</span>°C</p>
+    <p>Humidity: <span id="humidity">{{ humidity }}</span>%</p>
+    <div id="warning"></div> <!-- Placeholder for warning message -->
+</body>
 </html>
 
+<script>
+    function updateData() {
+        // Make an AJAX request to fetch updated data from server
+        fetch('/')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('temperature').textContent = data.temperature + '°C';
+            document.getElementById('humidity').textContent = data.humidity + '%';
+            // Check for warning message and display if present
+            if (data.warning) {
+                document.getElementById('warning').textContent = data.warning;
+            } else {
+                document.getElementById('warning').textContent = ''; // Clear any previous warning
+            }
+        });
+    }
+ 
+    // Update data every 5 seconds (adjust interval as needed)
+    setInterval(updateData, 5000);
+    </script>

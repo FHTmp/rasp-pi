@@ -1,0 +1,19 @@
+
+/usr/lib/python3/dist-packages/sense_emu/sense_hat.py:80: Warning: No emulator detected; spawning sense_emu_gui
+  warnings.warn(Warning('No emulator detected; spawning sense_emu_gui'))
+An error occurred: Humidity Init Failed
+Traceback (most recent call last):
+  File "/home/finau/env1/templates/app.py", line 70, in <module>
+    check_and_display_warning()
+  File "/home/finau/env1/templates/app.py", line 38, in check_and_display_warning
+    temperature = sense.get_temperature()
+                  ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/sense_emu/sense_hat.py", line 650, in get_temperature
+    return self.get_temperature_from_humidity()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/sense_emu/sense_hat.py", line 626, in get_temperature_from_humidity
+    self._init_humidity()  # Ensure humidity sensor is initialised
+    ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/sense_emu/sense_hat.py", line 593, in _init_humidity
+    raise OSError('Humidity Init Failed')
+OSError: Humidity Init Failed

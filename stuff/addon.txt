@@ -118,6 +118,13 @@ if __name__ == '__main__':
     app.run(debug=True)
 
 
+
+
+import warnings
+
+# Suppress specific warning from sense_hat library
+warnings.filterwarnings("ignore", message="No emulator detected", category=UserWarning)
+
 *****************python script******************
 
 *****************html script******************

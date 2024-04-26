@@ -63,3 +63,194 @@ In this script:
 - The script can be interrupted by pressing Ctrl+C to gracefully exit the loop.
 
 You'll need to integrate this script into your project along with the web interface implementation to achieve the desired functionality.
+
+
+*****************python script******************
+from flask import Flask, jsonify
+from sense_emu import SenseHat
+import time
+
+app = Flask(__name__)
+sense = SenseHat()
+
+# Define the temperature and humidity thresholds
+TEMP_THRESHOLD = 40  # Threshold temperature in Celsius
+HUMIDITY_THRESHOLD = 90  # Threshold humidity in percentage
+
+@app.route('/')
+def index():
+    try:
+        temperature = sense.get_temperature()
+        humidity = sense.get_humidity()
+        warning = check_and_display_warning(temperature, humidity)
+        data = {
+            'temperature': temperature,
+            'humidity': humidity,
+            'warning': warning
+        }
+        return jsonify(data)
+    except Exception as e:
+        # Log the error for debugging purposes
+        print("An error occurred:", e)
+        return jsonify({'error': str(e)}), 500
+
+def check_and_display_warning(temperature, humidity):
+    # Check if temperature or humidity exceeds thresholds
+    if temperature > TEMP_THRESHOLD or humidity > HUMIDITY_THRESHOLD:
+        # Construct the warning message
+        warning_message = "WARNING: "
+
+        if temperature > TEMP_THRESHOLD:
+            warning_message += f"Temperature ({temperature:.2f}°C) exceeds {TEMP_THRESHOLD}°C. "
+        if humidity > HUMIDITY_THRESHOLD:
+            warning_message += f"Humidity ({humidity:.2f}%) exceeds {HUMIDITY_THRESHOLD}%. "
+        
+        # Display warning message on the Sense emulator
+        sense.show_message(warning_message, text_colour=[255, 0, 0])  # Red text
+
+        return warning_message
+    else:
+        # No warning, clear any existing messages on the Sense emulator
+        sense.clear()
+        return None
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
+*****************python script******************
+
+*****************html script******************
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Raspberry Pi</title>
+    <style>        
+        /* Style for the main title */
+        h1 {
+            text-align: center;
+        }
+        
+        /* Style for the box frame */
+        .box-frame {
+            width: 80%;
+            margin: 20px auto;
+            border: 1px solid #333;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        /* Style for the small box to display data */
+        .data-box {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        /* Style for the warning message */
+        .warning {
+            background-color: #ffcccc;
+            border: 1px solid #ff0000;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main title -->
+    <h1>My Raspberry Pi</h1>
+
+    <!-- Box frame for the body -->
+    <div class="box-frame">
+        <!-- Warning message (initially hidden) -->
+        <div class="warning" id="warning-message" style="display: none;"></div>
+
+        <!-- Small box to display temperature data -->
+        <div class="data-box">
+            <h2>Temperature</h2>
+            <p id="temperature">Loading...</p>
+        </div>
+
+        <!-- Small box to display humidity data -->
+        <div class="data-box">
+            <h2>Humidity</h2>
+            <p id="humidity">Loading...</p>
+        </div>
+    </div>
+
+    <!-- JavaScript to update temperature, humidity, and warning message -->
+    <script>
+        // Function to fetch temperature and humidity data from the server
+        function fetchData() {
+            // Assume there is an endpoint on the server to fetch temperature and humidity data
+            // Replace the URL with the actual endpoint
+            fetch('/')
+                .then(response => response.json())
+                .then(data => {
+                    // Update temperature and humidity values in the HTML
+                    document.getElementById('temperature').innerText = `Temperature: ${data.temperature.toFixed(2)}°C`;
+                    document.getElementById('humidity').innerText = `Humidity: ${data.humidity.toFixed(2)}%`;
+
+                    // Check if temperature or humidity exceeds thresholds
+                    if (data.warning) {
+                        // Display the warning message
+                        document.getElementById('warning-message').innerText = data.warning;
+                        document.getElementById('warning-message').style.display = 'block';
+                    } else {
+                        // Hide the warning message if thresholds are not exceeded
+                        document.getElementById('warning-message').style.display = 'none';
+                    }
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        // Fetch data initially when the page loads
+        window.onload = fetchData;
+
+        // Update data every second
+        setInterval(fetchData, 1000);
+    </script>
+</body>
+</html>
+
+*****************html script******************
+
+*****************java script******************
+// Function to fetch temperature and humidity data from the server
+function fetchData() {
+    // Assume there is an endpoint on the server to fetch temperature and humidity data
+    // Replace the URL with the actual endpoint
+    fetch('/')
+        .then(response => response.json())
+        .then(data => {
+            // Update temperature and humidity values in the HTML
+            document.getElementById('temperature').innerText = `Temperature: ${data.temperature.toFixed(2)}°C`;
+            document.getElementById('humidity').innerText = `Humidity: ${data.humidity.toFixed(2)}%`;
+
+            // Check if temperature or humidity exceeds thresholds
+            if (data.warning) {
+                // Display the warning message
+                document.getElementById('warning-message').innerText = data.warning;
+                document.getElementById('warning-message').style.display = 'block';
+            } else {
+                // Hide the warning message if thresholds are not exceeded
+                document.getElementById('warning-message').style.display = 'none';
+            }
+        })
+        .catch(error => console.error('Error fetching data:', error));
+}
+
+// Fetch data initially when the page loads
+window.onload = fetchData;
+
+// Update data every second
+setInterval(fetchData, 1000);
+
+*****************java script******************
+
+

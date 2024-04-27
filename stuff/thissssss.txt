@@ -1,12 +1,9 @@
-
-***********************html,css,js******************************
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/style.css">
-    <script src="myscript.js"></script>
+    <title>My Raspberry Pi</title>
 <style>
            
         /* Style for the main title */
@@ -42,11 +39,9 @@
         }
 
 </style>
-
-    <title>My Raspberry Pi</title>
 </head>
+
 <body>
-    <!-- Main title -->
     <h1>My Raspberry Pi</h1>
 
     <!-- Box frame for the body -->
@@ -72,105 +67,49 @@
 
     <!-- JavaScript to update temperature, humidity, and warning message -->
     <script>
-// Update the fetch URL to match the Flask server endpoint
-function fetchData() {
-    fetch('http://localhost:5000/') // Assuming Flask server is running locally on port 5000
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            // Update temperature and humidity values in the HTML
-            document.getElementById("temperature").innerText = `Temperature: ${data.temperature.toFixed(2)}°C`;
-            document.getElementById("humidity").innerText = `Humidity: ${data.humidity.toFixed(2)}%`;
+        function fetchData() {
+            fetch('http://localhost:5000/') // Assuming Flask server is running on port 5000
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Update temperature and humidity values in the HTML
+                    document.getElementById("temperature").innerText = `Temperature: ${data.temperature.toFixed(2)}°C`;
+                    document.getElementById("humidity").innerText = `Humidity: ${data.humidity.toFixed(2)}%`;
+        
+                    // Check if temperature or humidity exceeds thresholds
+                    if (data.warning) {
+                        // Display the warning message
+                        document.getElementById('warning-message').innerText = data.warning;
+                        document.getElementById('warning-message').style.display = 'block';
+                    } else {
+                        // Hide the warning message if thresholds are not exceeded
+                        document.getElementById('warning-message').style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    // Handle the error here, e.g., display an error message on the UI
+                });
+        }
+        
+        // Fetch data initially when the page loads
+        window.addEventListener('DOMContentLoaded', fetchData);
+        
+        // Update data every second
+        setInterval(fetchData, 1000);
+        
+            </script>
 
-            // Check if temperature or humidity exceeds thresholds
-            if (data.warning) {
-                // Display the warning message
-                document.getElementById('warning-message').innerText = data.warning;
-                document.getElementById('warning-message').style.display = 'block';
-            } else {
-                // Hide the warning message if thresholds are not exceeded
-                document.getElementById('warning-message').style.display = 'none';
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error);
-            // Handle the error here, e.g., display an error message on the UI
-        });
-}
 
-// Fetch data initially when the page loads
-window.addEventListener('DOMContentLoaded', fetchData);
 
-// Update data every second
-setInterval(fetchData, 1000);
 
-    </script>
+
+
 </body>
 </html>
-
-***********************html,css,js******************************
-
-***********************py******************************
-from flask import Flask, jsonify, render_template
-from sense_emu import SenseHat
-import time
-
-app = Flask(__name__)
-sense = SenseHat()
-
-# Define the temperature and humidity thresholds
-TEMP_THRESHOLD = 40  # Threshold temperature in Celsius
-HUMIDITY_THRESHOLD = 90  # Threshold humidity in percentage
-
-@app.route('/')
-def index():
-    try:
-        temperature = sense.get_temperature()
-        humidity = sense.get_humidity()
-        warning = check_and_display_warning(temperature, humidity)
-        data = {
-            'temperature': temperature,
-            'humidity': humidity,
-            'warning': warning
-        }
-        return jsonify(data)
-    except Exception as e:
-        # Log the error for debugging purposes
-        print("An error occurred:", e)
-        return jsonify({'error': str(e)}), 500
-
-def check_and_display_warning(temperature, humidity):
-    # Check if temperature or humidity exceeds thresholds
-    if temperature > TEMP_THRESHOLD or humidity > HUMIDITY_THRESHOLD:
-        # Construct the warning message
-        warning_message = "WARNING: "
-
-        if temperature > TEMP_THRESHOLD:
-            warning_message += f"Temperature ({temperature:.2f}°C) exceeds {TEMP_THRESHOLD}°C. "
-        if humidity > HUMIDITY_THRESHOLD:
-            warning_message += f"Humidity ({humidity:.2f}%) exceeds {HUMIDITY_THRESHOLD}%. "
-        
-        # Display warning message on the Sense emulator
-        sense.show_message(warning_message, text_colour=[255, 0, 0])  # Red text
-
-        return warning_message
-    else:
-        # No warning, clear any existing messages on the Sense emulator
-        sense.clear()
-        return None
-
-import warnings
-
-# Suppress specific warning from sense_hat library
-warnings.filterwarnings("ignore", message="No emulator detected", category=UserWarning)
-
-if __name__ == '__main__':    
-    app.run(debug=True)
-
-***********************py******************************
 
 

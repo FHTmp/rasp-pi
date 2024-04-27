@@ -3,33 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sense-HAT Data</title>
+    <title>My Raspberry Pi</title>
+<style>
+           
+        /* Style for the main title */
+        h1 {
+            text-align: center;
+        }
+        
+        /* Style for the box frame */
+        .box-frame {
+            width: 80%;
+            margin: 20px auto;
+            border: 1px solid #333;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        /* Style for the small box to display data */
+        .data-box {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        /* Style for the warning message */
+        .warning {
+            background-color: #ffcccc;
+            border: 1px solid #ff0000;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+</style>
 </head>
+
 <body>
-    <h1>Sense-HAT Data</h1>
-    <p>Temperature: <span id="temperature">{{ temperature }}</span>°C</p>
-    <p>Humidity: <span id="humidity">{{ humidity }}</span>%</p>
-    <div id="warning"></div> <!-- Placeholder for warning message -->
+    <h1>My Raspberry Pi</h1>
+
+    <!-- Box frame for the body -->
+    <div class="box-frame">
+        <!-- Warning message (initially hidden) -->
+        <div class="warning" id="warning-message" style="display: none;"></div>
+
+        <!-- Small box to display temperature data -->
+        <div class="data-box">
+            <h2>Temperature</h2>
+            <p id="temperature"></p>
+        </div>
+
+        <!-- Small box to display humidity data -->
+        <div class="data-box">
+            <h2>Humidity</h2>
+            <p id="humidity"></p>
+        </div>
+    </div>
+
+    <!-- Placeholder for warning message -->
+    <div id="warning"></div>
+
+    <!-- JavaScript to update temperature, humidity, and warning message -->
+    <script>
+        function fetchData() {
+            fetch('http://localhost:5000/') // Assuming Flask server is running on port 5000
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Update temperature and humidity values in the HTML
+                    document.getElementById("temperature").innerText = `Temperature: ${data.temperature.toFixed(2)}°C`;
+                    document.getElementById("humidity").innerText = `Humidity: ${data.humidity.toFixed(2)}%`;
+        
+                    // Check if temperature or humidity exceeds thresholds
+                    if (data.warning) {
+                        // Display the warning message
+                        document.getElementById('warning-message').innerText = data.warning;
+                        document.getElementById('warning-message').style.display = 'block';
+                    } else {
+                        // Hide the warning message if thresholds are not exceeded
+                        document.getElementById('warning-message').style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    // Handle the error here, e.g., display an error message on the UI
+                });
+        }
+        
+        // Fetch data initially when the page loads
+        window.addEventListener('DOMContentLoaded', fetchData);
+        
+        // Update data every second
+        setInterval(fetchData, 1000);
+        
+            </script>
+
+
+
+
+
+
 </body>
 </html>
 
-<script>
-    function updateData() {
-        // Make an AJAX request to fetch updated data from server
-        fetch('/')
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('temperature').textContent = data.temperature + '°C';
-            document.getElementById('humidity').textContent = data.humidity + '%';
-            // Check for warning message and display if present
-            if (data.warning) {
-                document.getElementById('warning').textContent = data.warning;
-            } else {
-                document.getElementById('warning').textContent = ''; // Clear any previous warning
-            }
-        });
-    }
- 
-    // Update data every 5 seconds (adjust interval as needed)
-    setInterval(updateData, 5000);
-    </script>
+
